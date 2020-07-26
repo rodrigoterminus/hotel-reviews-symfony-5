@@ -35,3 +35,4 @@ services:
     environment:
       - COMPOSER_MEMORY_LIMIT=-1
       - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
+      - DATABASE_URL=mysql://root:thispasswordisnotsafe@mysql:3306/customer_alliance?serverVersion=5.7
