@@ -10,9 +10,22 @@ class HotelFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        for($i = 1; $i <= 10; $i++) {
+        $names = [
+            'Hotel Samambaia',
+            'Orchidea Hotel',
+            'Motel Catus',
+            'Hotel Era',
+            'Hotel Espada de São Jorge',
+            'Monstera Hotel',
+            'Hotel Flor de Seda',
+            'Hotel Lírio da Paz',
+            'Jibóia Hotel',
+            'Hotel Violeta',
+        ];
+
+        foreach ($names as $name) {
             $hotel = (new Hotel())
-                ->setName("Hotel $i");
+                ->setName($name);
             $manager->persist($hotel);
         }
 

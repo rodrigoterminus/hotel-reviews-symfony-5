@@ -25,7 +25,7 @@ class Hotel
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Review::class, mappedBy="hotel_id")
+     * @ORM\OneToMany(targetEntity=Review::class, mappedBy="hotel")
      */
     private $reviews;
 
@@ -63,7 +63,7 @@ class Hotel
     {
         if (!$this->reviews->contains($review)) {
             $this->reviews[] = $review;
-            $review->setHotelId($this);
+            $review->setHotel($this);
         }
 
         return $this;
@@ -74,8 +74,8 @@ class Hotel
         if ($this->reviews->contains($review)) {
             $this->reviews->removeElement($review);
             // set the owning side to null (unless already changed)
-            if ($review->getHotelId() === $this) {
-                $review->setHotelId(null);
+            if ($review->getHotel() === $this) {
+                $review->setHotel(null);
             }
         }
 

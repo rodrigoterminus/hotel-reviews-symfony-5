@@ -21,7 +21,7 @@ class Review
      * @ORM\ManyToOne(targetEntity=Hotel::class, inversedBy="reviews")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $hotel_id;
+    private $hotel;
 
     /**
      * @ORM\Column(type="integer")
@@ -38,19 +38,24 @@ class Review
      */
     private $created_date;
 
+    public function __construct()
+    {
+        $this->created_date = new \DateTime('now');
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getHotelId(): ?Hotel
+    public function getHotel(): ?Hotel
     {
-        return $this->hotel_id;
+        return $this->hotel;
     }
 
-    public function setHotelId(?Hotel $hotel_id): self
+    public function setHotel(?Hotel $hotel): self
     {
-        $this->hotel_id = $hotel_id;
+        $this->hotel = $hotel;
 
         return $this;
     }
