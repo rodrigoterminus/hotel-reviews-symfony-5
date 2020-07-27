@@ -24,18 +24,35 @@ class BenchmarkService
         $this->reviewRepository = $reviewRepository;
     }
 
-    public function generate(Hotel $hotel, \DateTime $startingDate, \DateTime $endingDate): BenchmarkDto
+    /**
+     * Generate benchmark for a given Hotel
+     *
+     * @param Hotel $hotel
+     * @param \DateTime $startingDate
+     * @param \DateTime $endingDate
+     * @return BenchmarkDto|null
+     */
+    public function generate(Hotel $hotel, \DateTime $startingDate, \DateTime $endingDate): ?BenchmarkDto
     {
-        $result =  $this->reviewRepository->getAverageScore(
+        $result = $this->reviewRepository->getAverageScorePerHotel(
             [
                 'starting' => $startingDate,
                 'ending' => $endingDate,
             ],
         );
 
+        if (count($result) === 0) {
+            return null;
+        }
+
         $averageScores = $this->normalizeResult($result);
         $averageScore = array_sum($averageScores) / count($averageScores);
         $hotelAverageScore = $averageScores[$hotel->getId()];
+
+        if (count($averageScores) < 2) {
+            return new BenchmarkDto($hotelAverageScore, $averageScore, null);
+        }
+
         $quartiles = Statistics::quartiles($averageScores);
         $tier = $this->getTier($quartiles, $hotelAverageScore);
 
@@ -43,6 +60,8 @@ class BenchmarkService
     }
 
     /**
+     * Transform results into associative array where keys are hotel_id and values are the average scores
+     *
      * @param array $result
      * @return array
      */
@@ -57,7 +76,14 @@ class BenchmarkService
         return $averages;
     }
 
-    private function getTier(array $quartiles, $number)
+    /**
+     * Return which tier a number belongs to given a quartile
+     *
+     * @param array $quartiles
+     * @param $number
+     * @return string|null
+     */
+    private function getTier(array $quartiles, $number): ?string
     {
         if ($number < $quartiles['first']) {
             return self::BENCHMARK_TIER_BOTTOM;

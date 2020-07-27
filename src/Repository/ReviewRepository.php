@@ -54,9 +54,7 @@ class ReviewRepository extends ServiceEntityRepository
 
         if ($hotel) {
             $qb
-                ->andWhere(
-                    $qb->expr()->eq('review.hotel', ':hotel')
-                )
+                ->andWhere($qb->expr()->eq('review.hotel', ':hotel'))
                 ->setParameter(':hotel', $hotel);
         }
 
@@ -85,7 +83,7 @@ class ReviewRepository extends ServiceEntityRepository
      * @param array $dateRange
      * @return array
      */
-    public function getAverageScore(array $dateRange = [], Hotel $hotel = null): array
+    public function getAverageScorePerHotel(array $dateRange = [], Hotel $hotel = null): array
     {
         $resolver = (new OptionsResolver())
             ->setDefaults([
