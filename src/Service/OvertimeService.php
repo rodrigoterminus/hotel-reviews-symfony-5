@@ -47,10 +47,7 @@ class OvertimeService
         );
 
         foreach ($result as $row) {
-            $dtos[] = (new OvertimeDto())
-                ->setAverageScore($row['average'])
-                ->setReviewCount($row['count'])
-                ->setDateGroup($row['group']);
+            $dtos[] = (new OvertimeDto($row['count'], $row['average'], $row['group']));
         }
 
         return $dtos;

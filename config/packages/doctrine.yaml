@@ -18,6 +18,7 @@ doctrine:
                 alias: App
         dql:
             datetime_functions:
+                date_format: DoctrineExtensions\Query\Mysql\DateFormat
                 month: DoctrineExtensions\Query\Mysql\Month
                 year: DoctrineExtensions\Query\Mysql\Year
                 week: DoctrineExtensions\Query\Mysql\Week

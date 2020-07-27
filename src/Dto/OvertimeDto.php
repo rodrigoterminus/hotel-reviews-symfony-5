@@ -26,22 +26,19 @@ class OvertimeDto
      */
     private $dateGroup;
 
+    public function __construct($reviewCount, $averageScore, $dateGroup)
+    {
+        $this->reviewCount = $reviewCount;
+        $this->averageScore = $averageScore;
+        $this->dateGroup = $dateGroup;
+    }
+
     /**
      * @return int
      */
     public function getReviewCount(): int
     {
         return $this->reviewCount;
-    }
-
-    /**
-     * @param int $reviewCount
-     * @return OvertimeDto
-     */
-    public function setReviewCount(int $reviewCount): OvertimeDto
-    {
-        $this->reviewCount = $reviewCount;
-        return $this;
     }
 
     /**
@@ -53,30 +50,10 @@ class OvertimeDto
     }
 
     /**
-     * @param int $averageScore
-     * @return OvertimeDto
-     */
-    public function setAverageScore(int $averageScore): OvertimeDto
-    {
-        $this->averageScore = $averageScore;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getDateGroup(): string
     {
         return $this->dateGroup;
-    }
-
-    /**
-     * @param string $dateGroup
-     * @return OvertimeDto
-     */
-    public function setDateGroup(string $dateGroup): OvertimeDto
-    {
-        $this->dateGroup = $dateGroup;
-        return $this;
     }
 }
