@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\Hotel;
 use App\Service\BenchmarkService;
 use App\Service\OvertimeService;
+use App\Traits\ApiTrait;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,8 +25,15 @@ use Symfony\Component\Serializer\Serializer;
  */
 class HotelsController
 {
+    use ApiTrait;
+
     /**
      * @Route("/{id}/reviews/overtime")
+     * @param Hotel $hotel
+     * @param Request $request
+     * @param OvertimeService $overtime
+     * @return Response
+     * @throws \Exception
      */
     public function overtimeAction(Hotel $hotel, Request $request, OvertimeService $overtime): Response
     {
@@ -46,15 +54,16 @@ class HotelsController
             new \DateTime($query['ending_date']),
         );
 
-        $encoders = [new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
-        $body = $serializer->serialize($result, 'json');
-        return JsonResponse::fromJsonString($body);
+        return JsonResponse::fromJsonString($this->serialize($result));
     }
 
     /**
      * @Route("/{id}/benchmark")
+     * @param Hotel $hotel
+     * @param Request $request
+     * @param BenchmarkService $benchmarkService
+     * @return Response
+     * @throws \Exception
      */
     public function benchmarkAction(Hotel $hotel, Request $request, BenchmarkService $benchmarkService): Response
     {
@@ -75,10 +84,6 @@ class HotelsController
             new \DateTime($query['ending_date']),
         );
 
-        $encoders = [new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
-        $body = $serializer->serialize($benchmark, 'json');
-        return JsonResponse::fromJsonString($body);
+        return JsonResponse::fromJsonString($this->serialize($benchmark));
     }
 }

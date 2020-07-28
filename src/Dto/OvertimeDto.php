@@ -10,23 +10,26 @@ class OvertimeDto
 {
     /**
      * @var int
-     * @SerializedName("review-count")
      */
-    private $reviewCount;
+    private int $reviewCount;
 
     /**
-     * @var int
-     * @SerializedName("average-score")
+     * @var float
      */
-    private $averageScore;
+    private float $averageScore;
 
     /**
      * @var string
-     * @SerializedName("date-group")
      */
-    private $dateGroup;
+    private string $dateGroup;
 
-    public function __construct($reviewCount, $averageScore, $dateGroup)
+    /**
+     * OvertimeDto constructor.
+     * @param int $reviewCount
+     * @param float $averageScore
+     * @param string $dateGroup
+     */
+    public function __construct(int $reviewCount, float $averageScore, string $dateGroup)
     {
         $this->reviewCount = $reviewCount;
         $this->averageScore = $averageScore;

@@ -6,16 +6,31 @@ namespace App\Dto;
 
 class BenchmarkDto
 {
+    /**
+     * @var float
+     */
     private float $hotelAverage;
 
-    private float $average;
+    /**
+     * @var float
+     */
+    private float $totalAverage;
 
-    private $quarter;
+    /**
+     * @var string|null
+     */
+    private ?string $quarter;
 
-    public function __construct($hotelAverage, $average, $quarter)
+    /**
+     * BenchmarkDto constructor.
+     * @param float $hotelAverage
+     * @param float $totalAverage
+     * @param string $quarter
+     */
+    public function __construct(float $hotelAverage, float $totalAverage, ?string $quarter)
     {
         $this->hotelAverage = $hotelAverage;
-        $this->average = $average;
+        $this->totalAverage = $totalAverage;
         $this->quarter = $quarter;
     }
 
@@ -30,9 +45,9 @@ class BenchmarkDto
     /**
      * @return float
      */
-    public function getAverage(): float
+    public function getTotalAverage(): float
     {
-        return $this->average;
+        return $this->totalAverage;
     }
 
     /**
