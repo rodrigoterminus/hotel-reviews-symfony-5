@@ -3,11 +3,11 @@
 namespace App\Repository;
 
 
+use App\Dto\Input\DateRangeDto;
 use App\Entity\Hotel;
 use App\Entity\Review;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use function Doctrine\ORM\QueryBuilder;
 
 /**
@@ -27,11 +27,16 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, Review::class);
     }
 
+    /**
+     * @param DateRangeDto $dateRange
+     * @param Hotel $hotel
+     * @param string $grouping
+     * @return array
+     */
     public function getAverageScoreByDateRange(
-        \DateTime $startingDate,
-        \DateTime $endingDate,
-        Hotel $hotel = null,
-        string $grouping = null
+        DateRangeDto $dateRange,
+        Hotel $hotel,
+        string $grouping
     ): array
     {
         $qb = $this->createQueryBuilder('review');
@@ -45,17 +50,13 @@ class ReviewRepository extends ServiceEntityRepository
                     ':endingDate',
                 )
             )
+            ->andWhere($qb->expr()->eq('review.hotel', ':hotel'))
             ->groupBy('group')
             ->setParameters([
-                ':startingDate' => $startingDate,
-                ':endingDate' => $endingDate,
+                ':startingDate' => $dateRange->getStartingDate(),
+                ':endingDate' => $dateRange->getEndingDate(),
+                ':hotel' => $hotel,
             ]);
-
-        if ($hotel) {
-            $qb
-                ->andWhere($qb->expr()->eq('review.hotel', ':hotel'))
-                ->setParameter(':hotel', $hotel);
-        }
 
         switch ($grouping) {
             case self::GROUP_DAILY:
@@ -78,40 +79,24 @@ class ReviewRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Hotel|null $hotel
-     * @param array $dateRange
+     * @param DateRangeDto $dateRange
      * @return array
      */
-    public function getAverageScorePerHotel(array $dateRange = [], Hotel $hotel = null): array
+    public function getAverageScorePerHotel(DateRangeDto $dateRange): array
     {
-        $resolver = (new OptionsResolver())
-            ->setDefaults([
-                'starting' => null,
-                'ending' => null,
-            ])
-            ->setAllowedTypes('starting', 'DateTime')
-            ->setAllowedTypes('ending', 'DateTime');
-        $range = $resolver->resolve($dateRange);
-
         $qb = $this->createQueryBuilder('review');
         $qb->select('AVG(review.score) AS average_score')
             ->addSelect('IDENTITY(review.hotel) AS hotel_id')
             ->groupBy('review.hotel');
 
-        if ($hotel) {
-            $qb
-                ->andWhere($qb->expr()->eq('review.hotel', ':hotel'))
-                ->setParameter(':hotel', $hotel);
-        }
-
-        if ($range['starting']) {
+        if ($dateRange->getStartingDate()) {
             $qb->andWhere($qb->expr()->gte('review.created_date', ':startingDate'))
-                ->setParameter(':startingDate', $range['starting']);
+                ->setParameter(':startingDate', $dateRange->getStartingDate());
         }
 
-        if ($range['ending']) {
+        if ($dateRange->getEndingDate()) {
             $qb->andWhere($qb->expr()->lte('review.created_date', ':endingDate'))
-                ->setParameter(':endingDate', $range['ending']);
+                ->setParameter(':endingDate', $dateRange->getEndingDate());
         }
 
         return $qb->getQuery()->getResult();

@@ -38,8 +38,8 @@ This repo is a fictional Hotel Reviews REST API built with,
 Parameter | Description | Param Type | Data Type
 ----------|-------------|------------|----------
  **id*** | Hotel ID | path | integer
- **starting_date*** | Starting date for the date range | query | string
- **ending_date*** | Ending date for the date range | query | string
+ **starting_date*** | Starting date for the date range _(YYYY-MM-DD)_ | query | string
+ **ending_date*** | Ending date for the date range _(YYYY-MM-DD)_ | query | string
  
  #### Response
  
@@ -65,8 +65,8 @@ Parameter | Description | Param Type | Data Type
 Parameter | Description | Param Type | Data Type
 ----------|-------------|------------|----------
  **id*** | Hotel ID | path | integer
- **starting_date*** | Starting date for the date range | query | string
- **ending_date*** | Ending date for the date range | query | string
+ **starting_date*** | Starting date for the date range _(YYYY-MM-DD)_ | query | string
+ **ending_date*** | Ending date for the date range _(YYYY-MM-DD)_ | query | string
  
  #### Response
  
@@ -79,3 +79,11 @@ Parameter | Description | Param Type | Data Type
       "quarter": "top"
     }
     
+## Todo
+- [ ] Extend ApiTrait to validate request params (query and body)
+- [ ] Write ApiTrait tests
+- [ ] Write KebabCaseNameCoverter tests
+- [ ] Write functional tests
+- [ ] Write Statistics tests
+- [ ] Write Repository tests
+- [ ] Abstract query building logic into separate classes

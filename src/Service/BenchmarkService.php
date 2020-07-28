@@ -4,8 +4,8 @@
 namespace App\Service;
 
 
-use App\Dto\BenchmarkDto;
-use App\Entity\Hotel;
+use App\Dto\Output\BenchmarkDto;
+use App\Dto\Input\BenchmarkParamsDto;
 use App\Repository\ReviewRepository;
 use App\Util\Statistics;
 
@@ -27,19 +27,12 @@ class BenchmarkService
     /**
      * Generate benchmark for a given Hotel
      *
-     * @param Hotel $hotel
-     * @param \DateTime $startingDate
-     * @param \DateTime $endingDate
+     * @param BenchmarkParamsDto $params
      * @return BenchmarkDto|null
      */
-    public function generate(Hotel $hotel, \DateTime $startingDate, \DateTime $endingDate): ?BenchmarkDto
+    public function generate(BenchmarkParamsDto $params): ?BenchmarkDto
     {
-        $result = $this->reviewRepository->getAverageScorePerHotel(
-            [
-                'starting' => $startingDate,
-                'ending' => $endingDate,
-            ],
-        );
+        $result = $this->reviewRepository->getAverageScorePerHotel($params->getDateRange());
 
         if (count($result) === 0) {
             return null;
@@ -47,7 +40,7 @@ class BenchmarkService
 
         $averageScores = $this->normalizeResult($result);
         $averageScore = array_sum($averageScores) / count($averageScores);
-        $hotelAverageScore = $averageScores[$hotel->getId()];
+        $hotelAverageScore = $averageScores[$params->getHotel()->getId()];
 
         if (count($averageScores) < 2) {
             return new BenchmarkDto($hotelAverageScore, $averageScore, null);

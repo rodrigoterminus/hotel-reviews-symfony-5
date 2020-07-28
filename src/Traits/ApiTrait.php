@@ -17,7 +17,7 @@ trait ApiTrait
     }
 
     /**
-     * Serialize input to be sent as response body
+     * Serialize Input to be sent as response body
      *
      * @param $input
      * @param int|null $status

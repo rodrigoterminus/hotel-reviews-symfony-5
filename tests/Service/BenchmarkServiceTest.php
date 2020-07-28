@@ -2,7 +2,9 @@
 
 namespace App\Tests\Service;
 
-use App\Dto\BenchmarkDto;
+use App\Dto\Output\BenchmarkDto;
+use App\Dto\Input\BenchmarkParamsDto;
+use App\Dto\Input\DateRangeDto;
 use App\Service\BenchmarkService;
 use App\Tests\PHPUnitUtil;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -39,7 +41,6 @@ class BenchmarkServiceTest extends TestCase
      */
     public function testGenerate($dataset, $expected)
     {
-
         $hotel = $this->getMockBuilder('\App\Entity\Hotel')
             ->disableOriginalConstructor()
             ->getMock();
@@ -47,16 +48,17 @@ class BenchmarkServiceTest extends TestCase
             ->expects($this->any())
             ->method('getId')
             ->will($this->returnValue(1));
+        $dateRange = new DateRangeDto(
+            new \DateTime('yesterday'),
+            new \DateTime('now'),
+        );
+        $paramsDto = new BenchmarkParamsDto($hotel, $dateRange);
         $this->reviewRepository
             ->expects($this->any())
             ->method('getAverageScorePerHotel')
             ->will($this->returnValue($dataset));
-        $output = $this->benchmarkService->generate(
-            $hotel,
-            new \DateTime(),
-            new \DateTime(),
-        );
-        $this->assertEquals($expected, $output, "Expected output to be a BenchmarkDto");
+        $output = $this->benchmarkService->generate($paramsDto);
+        $this->assertEquals($expected, $output);
     }
 
     public function generateProvider()
@@ -77,19 +79,19 @@ class BenchmarkServiceTest extends TestCase
         ];
 
         return [
-            [
+            'empty dataset' => [
                 [],
                 null,
             ],
-            [
+            'one record dataset' => [
                 [$dataset[0]],
                 new BenchmarkDto(5, 5, null),
             ],
-            [
+            'two records dataset' => [
                 [$dataset[0], $dataset[1]],
                 new BenchmarkDto(5, 7, null),
             ],
-            [
+            'larger dataset' => [
                 [$dataset[0], $dataset[1], $dataset[2]],
                 new BenchmarkDto(5,9, null),
             ]
@@ -109,7 +111,7 @@ class BenchmarkServiceTest extends TestCase
         $normalizeResult = PHPUnitUtil::getPrivateMethod($this->benchmarkService, 'normalizeResult');
         $output = $normalizeResult->invoke($this->benchmarkService, $input);
         $this->assertArrayHasKey($id, $output, "Expected output to have key $id");
-        $this->assertEquals($score, $output[$id], "Expected value to be $score, $output[$id] returned");
+        $this->assertEquals($score, $output[$id]);
     }
 
     /**
@@ -135,11 +137,11 @@ class BenchmarkServiceTest extends TestCase
         ];
 
         return [
-            [$quartiles, 4, BenchmarkService::BENCHMARK_TIER_BOTTOM],
-            [$quartiles, 14, BenchmarkService::BENCHMARK_TIER_TOP],
-            [$quartiles, 5, null],
-            [$quartiles, 13, null],
-            [$quartiles, 6, null]
+            'bottom tier' => [$quartiles, 4, BenchmarkService::BENCHMARK_TIER_BOTTOM],
+            'top tier' => [$quartiles, 14, BenchmarkService::BENCHMARK_TIER_TOP],
+            'bottom edge tier' => [$quartiles, 5, null],
+            'top edge tier' => [$quartiles, 13, null],
+            'middle tier' => [$quartiles, 6, null]
         ];
     }
 }

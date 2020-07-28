@@ -4,8 +4,9 @@
 namespace App\Service;
 
 
-use App\Dto\OvertimeDto;
-use App\Entity\Hotel;
+use App\Dto\Input\DateRangeDto;
+use App\Dto\Input\OvertimeParamsDto;
+use App\Dto\Output\OvertimeDto;
 use App\Repository\ReviewRepository;
 
 class OvertimeService
@@ -24,19 +25,16 @@ class OvertimeService
     }
 
     /**
-     * @param Hotel $hotel
-     * @param \DateTime $startingDate
-     * @param \DateTime $endingDate
+     * @param OvertimeParamsDto $params
      * @return array
      */
-    public function getByHotel(Hotel $hotel, \DateTime $startingDate, \DateTime $endingDate): array
+    public function getByHotel(OvertimeParamsDto $params): array
     {
-        $grouping = $this->getGrouping($startingDate, $endingDate);
+        $grouping = $this->getGrouping($params->getDateRange());
         $dtos = [];
         $result = $this->reviewRepository->getAverageScoreByDateRange(
-            $startingDate,
-            $endingDate,
-            $hotel,
+            $params->getDateRange(),
+            $params->getHotel(),
             $grouping,
         );
 
@@ -50,13 +48,13 @@ class OvertimeService
     /**
      * Get date group by a given date range
      *
-     * @param \DateTime $startingDate
-     * @param \DateTime $endingDate
+     * @param DateRangeDto $dateRange
      * @return string
      */
-    private function getGrouping(\DateTime $startingDate, \DateTime $endingDate)
+    private function getGrouping(DateRangeDto $dateRange)
     {
-        $diffDays = $startingDate->diff($endingDate)->days;
+        $diffDays = $dateRange->getStartingDate()
+            ->diff($dateRange->getEndingDate())->days;
 
         if ($diffDays <= self::GROUP_DAILY_LIMIT) {
             return ReviewRepository::GROUP_DAILY;

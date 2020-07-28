@@ -4,6 +4,9 @@
 namespace App\Controller;
 
 
+use App\Dto\Input\BenchmarkParamsDto;
+use App\Dto\Input\DateRangeDto;
+use App\Dto\Input\OvertimeParamsDto;
 use App\Entity\Hotel;
 use App\Service\BenchmarkService;
 use App\Service\OvertimeService;
@@ -46,11 +49,12 @@ class HotelsController
             throw new BadRequestException($exception->getMessage());
         }
 
-        $result = $overtime->getByHotel(
-            $hotel,
+        $dateRange = new DateRangeDto(
             new \DateTime($query['starting_date']),
             new \DateTime($query['ending_date']),
         );
+        $overtimeParams = new OvertimeParamsDto($hotel, $dateRange);
+        $result = $overtime->getByHotel($overtimeParams);
 
         return JsonResponse::fromJsonString($this->serialize($result));
     }
@@ -76,11 +80,12 @@ class HotelsController
             throw new BadRequestException($exception->getMessage());
         }
 
-        $benchmark = $benchmarkService->generate(
-            $hotel,
+        $dateRange = new DateRangeDto(
             new \DateTime($query['starting_date']),
             new \DateTime($query['ending_date']),
         );
+        $benchmarkParams = new BenchmarkParamsDto($hotel, $dateRange);
+        $benchmark = $benchmarkService->generate($benchmarkParams);
 
         return JsonResponse::fromJsonString($this->serialize($benchmark));
     }

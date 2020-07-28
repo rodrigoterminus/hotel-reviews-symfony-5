@@ -4,7 +4,9 @@
 namespace App\Tests\Service;
 
 
-use App\Dto\OvertimeDto;
+use App\Dto\Input\DateRangeDto;
+use App\Dto\Input\OvertimeParamsDto;
+use App\Dto\Output\OvertimeDto;
 use App\Repository\ReviewRepository;
 use App\Service\OvertimeService;
 use App\Tests\PHPUnitUtil;
@@ -48,15 +50,17 @@ class OvertimeServiceTest extends TestCase
         $hotel = $this->getMockBuilder('\App\Entity\Hotel')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->reviewRepository
-            ->expects($this->any())
-            ->method('getAverageScoreByDateRange')
-            ->will($this->returnValue($dataset));
-        $output = $this->overtimeService->getByHotel(
-            $hotel,
+        $dateRangeDto = new DateRangeDto(
             new \DateTime('yesterday'),
             new \DateTime('now'),
         );
+        $overtimeParamsDto = new OvertimeParamsDto($hotel, $dateRangeDto);
+        $this->reviewRepository
+            ->expects($this->any())
+            ->method('getAverageScoreByDateRange')
+            ->with($dateRangeDto, $hotel)
+            ->willReturn($dataset);
+        $output = $this->overtimeService->getByHotel($overtimeParamsDto);
         $this->assertEquals($expected, $output, "Expected OvertimeDto array to match");
     }
 
@@ -113,7 +117,8 @@ class OvertimeServiceTest extends TestCase
     public function testGetGrouping($staringDate, $endingDate, $expected)
     {
         $getGrouping = PHPUnitUtil::getPrivateMethod($this->overtimeService, 'getGrouping');
-        $output = $getGrouping->invoke($this->overtimeService, $staringDate, $endingDate);
+        $dateRange = new DateRangeDto($staringDate, $endingDate);
+        $output = $getGrouping->invoke($this->overtimeService, $dateRange);
         $this->assertEquals($expected, $output, "Expected output to be $output, $expected returned");
     }
 
