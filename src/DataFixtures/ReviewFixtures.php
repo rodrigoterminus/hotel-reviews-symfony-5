@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+
 use App\Entity\Hotel;
 use App\Entity\Review;
 use Doctrine\Bundle\FixturesBundle\Fixture;

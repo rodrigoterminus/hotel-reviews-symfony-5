@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Hotel;
 use App\Service\BenchmarkService;
 use App\Service\OvertimeService;
@@ -14,9 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class HotelsController

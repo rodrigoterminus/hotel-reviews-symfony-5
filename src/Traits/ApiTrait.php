@@ -5,7 +5,6 @@ namespace App\Traits;
 
 
 use App\Converter\KebabCaseNameConverter;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;

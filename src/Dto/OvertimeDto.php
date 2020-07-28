@@ -4,8 +4,6 @@
 namespace App\Dto;
 
 
-use Symfony\Component\Serializer\Annotation\SerializedName;
-
 class OvertimeDto
 {
     /**
