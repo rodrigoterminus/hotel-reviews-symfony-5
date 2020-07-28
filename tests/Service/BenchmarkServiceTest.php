@@ -49,7 +49,7 @@ class BenchmarkServiceTest extends TestCase
             ->will($this->returnValue(1));
         $this->reviewRepository
             ->expects($this->any())
-            ->method('getAverageScore')
+            ->method('getAverageScorePerHotel')
             ->will($this->returnValue($dataset));
         $output = $this->benchmarkService->generate(
             $hotel,

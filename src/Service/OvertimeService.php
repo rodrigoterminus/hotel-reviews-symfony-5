@@ -6,10 +6,7 @@ namespace App\Service;
 
 use App\Dto\OvertimeDto;
 use App\Entity\Hotel;
-use App\Entity\Review;
 use App\Repository\ReviewRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
 
 class OvertimeService
 {
@@ -26,20 +23,17 @@ class OvertimeService
         $this->reviewRepository = $reviewRepository;
     }
 
+    /**
+     * @param Hotel $hotel
+     * @param \DateTime $startingDate
+     * @param \DateTime $endingDate
+     * @return array
+     */
     public function getByHotel(Hotel $hotel, \DateTime $startingDate, \DateTime $endingDate): array
     {
-        $diffDays = $startingDate->diff($endingDate)->days;
-
-        if ($diffDays <= self::GROUP_DAILY_LIMIT) {
-            $grouping = ReviewRepository::GROUP_DAILY;
-        } else if ($diffDays <= self::GROUP_WEEKLY_LIMIT) {
-            $grouping = ReviewRepository::GROUP_WEEKLY;
-        } else {
-            $grouping = ReviewRepository::GROUP_MONTHLY;
-        }
-
+        $grouping = $this->getGrouping($startingDate, $endingDate);
         $dtos = [];
-        $result = $this->reviewRepository->getAverageByDateRange(
+        $result = $this->reviewRepository->getAverageScoreByDateRange(
             $startingDate,
             $endingDate,
             $hotel,
@@ -51,5 +45,25 @@ class OvertimeService
         }
 
         return $dtos;
+    }
+
+    /**
+     * Get date group by a given date range
+     *
+     * @param \DateTime $startingDate
+     * @param \DateTime $endingDate
+     * @return string
+     */
+    private function getGrouping(\DateTime $startingDate, \DateTime $endingDate)
+    {
+        $diffDays = $startingDate->diff($endingDate)->days;
+
+        if ($diffDays <= self::GROUP_DAILY_LIMIT) {
+            return ReviewRepository::GROUP_DAILY;
+        } else if ($diffDays <= self::GROUP_WEEKLY_LIMIT) {
+            return ReviewRepository::GROUP_WEEKLY;
+        }
+
+        return ReviewRepository::GROUP_MONTHLY;
     }
 }

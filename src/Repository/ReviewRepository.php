@@ -28,7 +28,7 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, Review::class);
     }
 
-    public function getAverageByDateRange(
+    public function getAverageScoreByDateRange(
         \DateTime $startingDate,
         \DateTime $endingDate,
         Hotel $hotel = null,
